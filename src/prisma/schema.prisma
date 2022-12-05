@@ -1,23 +1,115 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// model User {
+//   id       Int    @id @default(autoincrement())
+//   email    String @unique
+//   password String
+// }
+
+// model Blog {
+//   id String @unique
+//   title String @unique
+//   content String
+// }
+
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("MONGO_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
+model Users {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  pic         String
+  createdTime DateTime @default(now())
+  lastTime    DateTime @default(now())
+  status      Boolean  @default(false)
+  unreadMsg   BigInt   @default(0)
 }
 
-model Blog {
-  id String @unique
-  title String @unique
-  content String
+model MSGGroup {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  members String[]
+}
+
+//  {
+//         "id": 1,
+//         "chatId": 121,
+//         "createdTime": "02:30",
+//         "lastTime": "20:34",
+//         "mode": "Group",
+//         "chatName": "Share Your Story",
+//         "joiner": {
+//             "names": [
+//                 "Devon Lane",
+//                 "Jenny White"
+//             ],
+//             "members": 4
+//         },
+//         "content": [
+//             {
+//                 "sendId": 12101,
+//                 "name": "Jenny White",
+//                 "sendTime": "02:30",
+//                 "content": "If you want to learn from community builders & spur ideas from how others run virtual events, check out Vanilla Forums(11/17 - 11/18/20) for free.",
+//                 "reply": {
+//                     "mentionId": 0
+//                 }
+//             },
+//         ]
+//     }
+
+enum Mode {
+  SINGLE
+  GROUP
+}
+
+model ChatContent {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  chatId      BigInt
+  createdTime DateTime @default(now())
+  lastTime    DateTime @default(now())
+  mode        Mode     @default(SINGLE)
+  chatName    String
+  joiner      Joiner?  @relation(fields: [joinerId], references: [id])
+  joinerId    String?  @db.ObjectId
+  content     Content  @relation(fields: [contentId], references: [id])
+
+  contentId String @db.ObjectId
+}
+
+model Joiner {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  names       String[]
+  members     Int
+  ChatContent ChatContent[]
+}
+
+model Content {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  sendId      BigInt
+  sendTime    DateTime      @default(now())
+  content     String
+  ChatContent ChatContent[]
+}
+
+model Reply {
+  id          Int    @id @map("_id")
+  metionId    Int    @default(0)
+  mentionName String @default("null")
 }

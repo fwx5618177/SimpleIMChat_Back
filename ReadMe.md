@@ -7,6 +7,18 @@
 1. 开启数据库: `make start-dev`
 2. 开启服务: `npm run dev`
 
+## TODO
+- socket service的消息处理
+  - 缓存的处理
+  - 消息的idempotence
+  - 链路追踪和治理
+- 权限认证
+- 密码校验
+- rpc: rpc支持websockt连接, node 作为 bff 转发，或者就当接口实现, 需要的数据 rpc 拿也好
+- middleware-rust: Node 调用Rust加密结果
+  - napi-rs
+  - zig-napi
+
 ## 基于Express的一键搭建模板
 - [x] Makefile
 - [x] docker

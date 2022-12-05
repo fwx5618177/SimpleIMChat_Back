@@ -27,10 +27,17 @@ class SocketController {
     }
 
     public handleReceive(socket: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, socketName: SocketName): void {
-        socket.on(socketName, (arg: SocketDto, callback: any) => {
+        socket.on(socketName, async (arg: SocketDto, callback: any) => {
             switch (socketName) {
                 case 'hi':
-                    this.socketService.hiTest(arg, callback)
+                    // const created = await this.socketService.hiTest(arg)
+                    const find = await this.socketService.findTest(arg)
+                    console.log('received:', arg)
+                    callback(
+                        JSON.stringify({
+                            find,
+                        }),
+                    )
             }
         })
     }
