@@ -3,8 +3,11 @@ logs/
 migrations/
 dist/
 
+docker/mongodb/.docker/
+
 *.log
 
 # *.local
 # .env
 .DS_Store
+
