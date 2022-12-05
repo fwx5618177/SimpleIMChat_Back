@@ -3,7 +3,11 @@
 2. Docker的应用
 3. Graphql
 
-# 基于Express的一键搭建模板
+## 使用
+1. 开启数据库: `make start-dev`
+2. 开启服务: `npm run dev`
+
+## 基于Express的一键搭建模板
 - [x] Makefile
 - [x] docker
 - [x] husky
@@ -84,4 +88,5 @@ query {
 }
 ```
 
+## 2. MongoDB
 

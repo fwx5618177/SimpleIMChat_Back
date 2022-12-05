@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import request from 'supertest'
-import { PrismaClient, User } from '@prisma/client'
-import App from '@/app'
+// import { PrismaClient, User } from '@prisma/client'
+import App from '../app'
 import { CreateUserDto } from '@dtos/users.dto'
 import UserRoute from '@routes/users.route'
 

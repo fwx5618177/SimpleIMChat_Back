@@ -2,7 +2,7 @@
 # ex) production-stage: make build APP_NAME=<APP_NAME>
 # ex) development-stage: make build-dev APP_NAME=<APP_NAME>
 
-APP_NAME = typescript-express-container
+APP_NAME = im_communication
 APP_NAME := $(APP_NAME)
 
 .PHONY: build
@@ -21,6 +21,12 @@ build:
 # Build the whole environment, docker-composer
 build-start:
 	docker-compose up --force-recreate
+
+# start dev docker-compose
+start-dev:
+	docker-compose -f docker-compose-dev.yml\
+		-p ${APP_NAME} up --force-recreate
+
 
 # Watch current work container
 watch:

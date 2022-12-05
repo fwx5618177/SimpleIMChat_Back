@@ -14,32 +14,51 @@ import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import errorMiddleware from '@/middlewares/error.middleware'
 import { ApolloServer, gql } from 'apollo-server-express'
+import { Server } from 'socket.io'
+import http from 'http'
+import { DefaultEventsMap } from 'socket.io/dist/typed-events'
+import SocketMiddleware from './middlewares/socket.middleware'
+import { socketRoutes } from './routes'
 
 class App {
     public app: express.Application
     public env: string
     public port: string | number
+    public socket: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+    public server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>
 
     constructor(routes: Routes[]) {
         this.app = express()
         this.env = NODE_ENV || 'development'
-        this.port = PORT || 3000
+        this.port = PORT || 7000
+        this.server = http.createServer(this.app)
+        this.socket = new Server(this.server, {
+            cors: {
+                origin: '*',
+            },
+        })
 
         this.initializeMiddlewares()
         this.initializeRoutes(routes)
         this.initializeSwagger()
         this.initializeErrorHandling()
         this.intialGraphqlApollo()
+        this.wsocket()
     }
 
     public listen() {
-        this.app.listen(this.port, () => {
+        this.server.listen(this.port, () => {
             logger.info(`=====================================`)
             logger.info(`======= ENV: ${chalk.red(this.env)} =======`)
             logger.info(`Listening on the port: ${chalk.green(this.port)}`)
             logger.info(`Link: ${chalk.bgGreenBright('http://localhost:' + this.port)}/`)
             logger.info(`=====================================`)
         })
+    }
+
+    public wsocket() {
+        logger.info(`======= ENV: ${chalk.red(this.env)} =======`)
+        logger.info(`WebSocket Listening on the port: ${chalk.green(this.port)}`)
     }
 
     public getServer(): express.Application {
@@ -65,12 +84,16 @@ class App {
         this.app.use(express.json())
         this.app.use(express.urlencoded({ extended: false }))
         this.app.use(cookieParser())
+
+        this.socket.use(SocketMiddleware)
     }
 
     private initializeRoutes(routes: Routes[]) {
         routes.forEach(route => {
             this.app.use('/', route.router)
         })
+
+        socketRoutes.initializeSockets(this.socket)
     }
 
     private initializeSwagger() {

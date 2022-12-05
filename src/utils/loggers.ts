@@ -10,6 +10,7 @@ import { existsSync, mkdirSync } from 'fs'
 
 // logs dir
 const logDir: string = path.join(__dirname, String(LOG_DIR))
+console.log('logDir:', logDir)
 
 if (!existsSync(logDir)) {
     mkdirSync(logDir)
